@@ -1,4 +1,5 @@
 import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+import { extractTorsoJoints } from "./joints.js";
 
 let poseLandmarker; // AI model
 let drawingUtils; // For point drawwing
