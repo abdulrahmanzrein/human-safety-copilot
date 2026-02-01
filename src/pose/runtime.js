@@ -1,5 +1,7 @@
 import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
-import { extractTorsoJoints } from "./joints.js";
+// Functions from other files
+import { extractTorsoJoints } from "./agent/joints.js";
+import { runAgent } from "./agent/agent.js";
 
 let poseLandmarker; // AI model
 let drawingUtils; // For point drawwing
@@ -21,7 +23,7 @@ async function initPose() {
     },
     runningMode: "VIDEO"
   });
-  
+
   canvasCtx = canvas.getContext("2d");
   drawingUtils = new DrawingUtils(canvasCtx);
   console.log("AI Loaded");
@@ -61,24 +63,28 @@ async function predictWebcam() {
 
     // Clear previous points drawn
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     if (results.landmarks && results.landmarks.length > 0) {
       // Get points
-      const points = results.landmarks[0]; 
+      const points = results.landmarks[0];
 
       // Populate constants with point data
-      const leftShoulder = points[11];
-      const rightShoulder = points[12];
-      const leftHip = points[23];
-      const rightHip = points[24];
+      const joints = extractTorsoJoints(points);
+      if (!joints) {
+        requestAnimationFrame(predictWebcam);
+        return;
+      }
 
-      // Output Data
-      console.log(`Left Shoulder X: ${leftShoulder.x.toFixed(2)}`);
-      console.log(`Right Shoulder X: ${rightShoulder.x.toFixed(2)}`);
-      console.log(`Left Shoulder Y: ${leftShoulder.y.toFixed(2)}`);
-      console.log(`Right Shoulder Y: ${rightShoulder.y.toFixed(2)}`);
-      console.log(`Left Shoulder Z: ${leftShoulder.z.toFixed(2)}`);
-      console.log(`Right Shoulder Z: ${rightShoulder.z.toFixed(2)}`);
+      const result = runAgent(joints);
+      console.log(result);
+
+      // // Output Data
+      // console.log(`Left Shoulder X: ${leftShoulder.x.toFixed(2)}`);
+      // console.log(`Right Shoulder X: ${rightShoulder.x.toFixed(2)}`);
+      // console.log(`Left Shoulder Y: ${leftShoulder.y.toFixed(2)}`);
+      // console.log(`Right Shoulder Y: ${rightShoulder.y.toFixed(2)}`);
+      // console.log(`Left Shoulder Z: ${leftShoulder.z.toFixed(2)}`);
+      // console.log(`Right Shoulder Z: ${rightShoulder.z.toFixed(2)}`);
 
       // Draw skeleton/points
       for (const landmark of results.landmarks) {
