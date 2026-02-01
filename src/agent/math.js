@@ -13,3 +13,12 @@ export function torsoLeanAngleDeg(shoulderMid, hipMid) {
     return Math.atan2(dx, dy) * (180 / Math.PI);
 }
 
+/**
+ * Simple exponential smoothing to reduce jitter.
+ * alpha closer to 1 = more responsive
+ * alpha closer to 0 = smoother
+ */
+export function smoothValue(prev, current, alpha = 0.7) {
+    if (prev === null || prev === undefined) return current;
+    return alpha * current + (1 - alpha) * prev;
+  }
