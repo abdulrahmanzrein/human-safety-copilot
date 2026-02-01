@@ -8,14 +8,7 @@ export function averagePoint(a, b) {
     };
 }
 
-/**
- * Computes forward torso lean angle in degrees.
- * Uses the torso vector from hips -> shoulders.
- *
- * Angle meaning:
- * 0°   = upright
- * >0°  = leaning forward
- */
+// Calculate torso lean angle in degrees
 
 export function torsoLeanAngleDeg(shoulderMid, hipMid) {
     const vx = shoulderMid.x - hipMid.x;
@@ -24,15 +17,13 @@ export function torsoLeanAngleDeg(shoulderMid, hipMid) {
 
     // Forward lean = how much torso tilts forward (Z) relative to vertical (Y)
     // MediaPipe: +Z is toward the camera
-    const verticalMag = Math.sqrt(vx * vx + vy * vy);
+    const verticalMag = Math.sqrt(vx * vx + vy * vy); //cited chatgpt
     return Math.atan2(vz, verticalMag) * (180 / Math.PI);
 }
 
-/**
- * Simple exponential smoothing to reduce jitter.
- * alpha closer to 1 = more responsive
- * alpha closer to 0 = smoother
- */
+
+ //Simple exponential smoothing to reduce jitter.
+
 export function smoothValue(prev, current, alpha = 0.7) {
     if (prev === null || prev === undefined) return current;
     return alpha * current + (1 - alpha) * prev;
