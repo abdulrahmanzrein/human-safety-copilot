@@ -1,7 +1,8 @@
 // src/agent/joints.js
 // Joint extractor: converts MediaPipe landmarks into torso joints
 
-import { averagePoint } from "./math.js";
+import { averagePoint } from "../agent/math.js";
+
 
 export function extractTorsoJoints(landmarks) {
   if (!landmarks) return null;
