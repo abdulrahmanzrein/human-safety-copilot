@@ -3,11 +3,11 @@
 // It looks at how much the torso leans AND how fast it changes.
 
 // Angle thresholds (degrees)
-const SAFE_MAX_LEAN_DEG = 20;   // clearly safe posture
-const RISK_MIN_LEAN_DEG = 30;   // clearly unsafe posture
+const SAFE_MAX_LEAN_DEG = 35;   // clearly safe posture
+const RISK_MIN_LEAN_DEG = 70;   // clearly unsafe posture
 
 // Sudden movement threshold (degrees per frame)
-const SUDDEN_LEAN_DELTA = 8;
+const SUDDEN_LEAN_DELTA = 15;
 
 // Store last angle to detect sudden changes
 let lastAngle = null;

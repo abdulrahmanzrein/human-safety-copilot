@@ -5,7 +5,7 @@ let detailsEl = null;
 
 
 let lastRiskTimeMs = 0;
-const HOLD_RISK_MS = 700; // kepps risk visible clearly while it is triggered
+const HOLD_RISK_MS = 700; // keeps risk visible clearly while it is triggered
 
 export function ensureHud() {
   if (hudEl) return;
@@ -21,10 +21,11 @@ export function ensureHud() {
   detailsEl = document.createElement("div");
   detailsEl.id = "safetyDetails";
   detailsEl.innerHTML = `
-    <div class="row"><span class="label">Reason</span><span class="value" id="hudReason">—</span></div>
-    <div class="row"><span class="label">Torso angle</span><span class="value" id="hudAngle">—</span></div>
-    <div class="row"><span class="label">State</span><span class="value" id="hudState">—</span></div>
-  `;
+  <div class="row"><span class="label">Reason:</span><span class="value" id="hudReason">—</span></div>
+  <div class="row"><span class="label">Torso angle:</span><span class="value" id="hudAngle">—</span></div>
+  <div class="row"><span class="label">State:</span><span class="value" id="hudState">—</span></div>
+`;
+
 
   hudEl.appendChild(bannerEl);
   hudEl.appendChild(detailsEl);
