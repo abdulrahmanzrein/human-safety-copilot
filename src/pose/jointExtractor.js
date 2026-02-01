@@ -1,4 +1,10 @@
 // global variables
+import {
+  averagePoint,
+  smoothValue,
+  torsoLeanAngleDeg
+} from "./math.js";
+
 const SMOOTHING_ALPHA = 0.7;
 let previousTorso = null;
 // main
@@ -14,49 +20,33 @@ export function extractTorsoJoints(landmarks) {
     return null;
   }
 
-  const shoulders = average(leftShoulder, rightShoulder);
-  const hips = average(leftHip, rightHip);
+  const shoulderMid = averagePoint(leftShoulder, rightShoulder);
+  const hipMid = averagePoint(leftHip, rightHip);
 
-  const normalizedShoulders = {
-    x: shoulders.x - hips.x,
-    y: shoulders.y - hips.y,
-    z: shoulders.z - hips.z
-  };
-
-  const currentTorso = {
-    shoulders: normalizedShoulders,
-    hips: hips
-  };
+  const currentTorso = {shoulderMid,hipMid};
 
   const smoothedTorso = previousTorso
-    ? smooth(previousTorso, currentTorso)
+    ? {
+        shoulderMid: {
+          x: smoothValue(previousTorso.shoulderMid.x, shoulderMid.x, SMOOTHING_ALPHA),
+          y: smoothValue(previousTorso.shoulderMid.y, shoulderMid.y, SMOOTHING_ALPHA),
+          z: smoothValue(previousTorso.shoulderMid.z, shoulderMid.z, SMOOTHING_ALPHA),
+        },
+        hipMid: {
+          x: smoothValue(previousTorso.hipMid.x, hipMid.x, SMOOTHING_ALPHA),
+          y: smoothValue(previousTorso.hipMid.y, hipMid.y, SMOOTHING_ALPHA),
+          z: smoothValue(previousTorso.hipMid.z, hipMid.z, SMOOTHING_ALPHA),
+        }
+      }
     : currentTorso;
 
   previousTorso = smoothedTorso;
-  return smoothedTorso;
-}
-// functions 
+  
+   const torsoLeanDeg = torsoLeanAngleDeg(
+    smoothedTorso.shoulderMid,
+    smoothedTorso.hipMid
+  );
 
-// functions takes 2 inputs and calculates their average
-function average(a, b) {
-  return {
-    x: (a.x + b.x) / 2,
-    y: (a.y + b.y) / 2,
-    z: (a.z + b.z) / 2
-  };
-}
-// smoothes video function taking two inputs and applying a smoothing factor
-function smooth(prev, curr) {
-  return {
-    shoulders: {
-      x: SMOOTHING_ALPHA * prev.shoulders.x + (1 - SMOOTHING_ALPHA) * curr.shoulders.x,
-      y: SMOOTHING_ALPHA * prev.shoulders.y + (1 - SMOOTHING_ALPHA) * curr.shoulders.y,
-      z: SMOOTHING_ALPHA * prev.shoulders.z + (1 - SMOOTHING_ALPHA) * curr.shoulders.z
-    },
-    hips: {
-      x: SMOOTHING_ALPHA * prev.hips.x + (1 - SMOOTHING_ALPHA) * curr.hips.x,
-      y: SMOOTHING_ALPHA * prev.hips.y + (1 - SMOOTHING_ALPHA) * curr.hips.y,
-      z: SMOOTHING_ALPHA * prev.hips.z + (1 - SMOOTHING_ALPHA) * curr.hips.z
-    }
-  };
+  
+return {shoulderMid: smoothedTorso.shoulderMid,hipMid: smoothedTorso.hipMid,torsoLeanDeg};
 }
