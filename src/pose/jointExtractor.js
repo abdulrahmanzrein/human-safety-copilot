@@ -17,13 +17,21 @@ export function extractTorsoJoints(landmarks) {
     return null;
   }
 
+
   // Average left/right joints
   const shoulderMid = averagePoint(leftShoulder, rightShoulder);
   const hipMid = averagePoint(leftHip, rightHip);
 
+  const spine = {
+    x: shoulderMid.x - hipMid.x,
+    y: shoulderMid.y - hipMid.y,
+    z: (shoulderMid.z ?? 0) - (hipMid.z ?? 0)
+  };
+
   // Return ONLY clean torso joints
   return {
     shoulderMid,
-    hipMid
+    hipMid,
+    spine
   };
 }
