@@ -3,6 +3,9 @@ import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdel
 import { extractTorsoJoints } from "./jointExtractor.js";
 import { runAgent } from "../agent/agent.js";
 
+import { ensureHud, updateHud } from "../UI/hud.js";
+import { drawTorsoOverlay } from "../UI/overlay.js";
+
 let poseLandmarker; // AI model
 let drawingUtils; // For point drawwing
 let canvasCtx; // For point drawing
@@ -12,6 +15,8 @@ let webcamRunning = false; // Webcam status
 const video = document.getElementById("webcam");
 const canvas = document.getElementById("output_canvas");
 const webcamButton = document.getElementById("webcamButton");
+
+ensureHud();
 
 // Init MediaPipe
 async function initPose() {
@@ -77,6 +82,14 @@ async function predictWebcam() {
 
       const result = runAgent(joints);
       console.log(result);
+
+      updateHud(result);
+      drawTorsoOverlay({
+        canvas,
+        ctx: canvasCtx,
+        joints,
+        agentResult: result
+      });
 
       // // Output Data
       // console.log(`Left Shoulder X: ${leftShoulder.x.toFixed(2)}`);
