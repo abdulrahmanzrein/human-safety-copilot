@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Human Safety Copilot</title>
+  <style>
+    .container {
+      position: relative;
+      width: 640px;
+      height: 480px;
+    }
+
+    /* Position both in the exact same spot */
+    video,
+    canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    /* Put the canvas in front of the video */
+    #output_canvas {
+      z-index: 10;
+      pointer-events: none;
+      /* Let clicks pass through to the button/video */
+    }
+  </style>
+</head>
+
+<body>
+  <button id="webcamButton">Start Webcam</button>
+
+  <div class="container">
+    <video id="webcam" autoplay playsinline></video>
+    <canvas id="output_canvas"></canvas>
+  </div>
+
+  <script type="module" src="runtime.js"></script>
+</body>
+
+</html>
