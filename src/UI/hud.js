@@ -21,9 +21,9 @@ export function ensureHud() {
   detailsEl = document.createElement("div");
   detailsEl.id = "safetyDetails";
   detailsEl.innerHTML = `
-  <div class="row"><span class="label">Reason:</span><span class="value" id="hudReason">—</span></div>
-  <div class="row"><span class="label">Torso angle:</span><span class="value" id="hudAngle">—</span></div>
-  <div class="row"><span class="label">State:</span><span class="value" id="hudState">—</span></div>
+  <div class="row"><span class="label">Reason: </span><span class="value" id="hudReason">—</span></div>
+  <div class="row"><span class="label">Torso angle: </span><span class="value" id="hudAngle">—</span></div>
+  <div class="row"><span class="label">State: </span><span class="value" id="hudState">—</span></div>
 `;
 
 
@@ -73,7 +73,8 @@ export function updateHud(agentResult) {
   const stateEl = document.getElementById("hudState");
 
   if (reasonEl) reasonEl.textContent = reason;
-  if (angleEl) angleEl.textContent = angle === null ? "—" : `${angle.toFixed(1)}°`;
+  if (angleEl) angleEl.textContent = angle === null ? "—" : `${Math.abs(angle).toFixed(1)
+  }°`;
   if (stateEl) stateEl.textContent = stateText;
 }
 
