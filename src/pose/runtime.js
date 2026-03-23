@@ -15,6 +15,7 @@ let webcamRunning = false; // Webcam status
 const video = document.getElementById("webcam");
 const canvas = document.getElementById("output_canvas");
 const webcamButton = document.getElementById("webcamButton");
+const placeholder = document.getElementById("placeholder");
 
 ensureHud();
 
@@ -48,13 +49,17 @@ webcamButton.addEventListener("click", async () => {
   // Button toggle (off/on)
   if (webcamRunning) {
     webcamRunning = false;
-    webcamButton.innerText = "ENABLE WEBCAM";
+    webcamButton.textContent = "Start Webcam";
+    webcamButton.classList.remove("active");
+    if (placeholder) placeholder.style.display = "";
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(track => track.stop());
     }
   } else {
     webcamRunning = true;
-    webcamButton.innerText = "DISABLE WEBCAM";
+    webcamButton.textContent = "Stop Webcam";
+    webcamButton.classList.add("active");
+    if (placeholder) placeholder.style.display = "none";
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
   }
@@ -94,14 +99,6 @@ async function predictWebcam() {
         joints,
         agentResult: result
       });
-
-      // // Output Data
-      // console.log(`Left Shoulder X: ${leftShoulder.x.toFixed(2)}`);
-      // console.log(`Right Shoulder X: ${rightShoulder.x.toFixed(2)}`);
-      // console.log(`Left Shoulder Y: ${leftShoulder.y.toFixed(2)}`);
-      // console.log(`Right Shoulder Y: ${rightShoulder.y.toFixed(2)}`);
-      // console.log(`Left Shoulder Z: ${leftShoulder.z.toFixed(2)}`);
-      // console.log(`Right Shoulder Z: ${rightShoulder.z.toFixed(2)}`);
 
       // Draw skeleton/points
       for (const landmark of results.landmarks) {

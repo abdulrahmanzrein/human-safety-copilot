@@ -3,9 +3,8 @@ let hudEl = null;
 let bannerEl = null;
 let detailsEl = null;
 
-
 let lastRiskTimeMs = 0;
-const HOLD_RISK_MS = 700; // keeps risk visible clearly while it is triggered
+const HOLD_RISK_MS = 700;
 
 export function ensureHud() {
   if (hudEl) return;
@@ -15,17 +14,16 @@ export function ensureHud() {
 
   bannerEl = document.createElement("div");
   bannerEl.id = "safetyBanner";
-  bannerEl.textContent = "LOADING…";
+  bannerEl.innerHTML = `<span class="status-dot"></span><span class="status-text">LOADING…</span>`;
   bannerEl.className = "warn";
 
   detailsEl = document.createElement("div");
   detailsEl.id = "safetyDetails";
   detailsEl.innerHTML = `
-  <div class="row"><span class="label">Reason: </span><span class="value" id="hudReason">—</span></div>
-  <div class="row"><span class="label">Torso angle: </span><span class="value" id="hudAngle">—</span></div>
-  <div class="row"><span class="label">State: </span><span class="value" id="hudState">—</span></div>
+  <div class="row"><span class="label">Reason</span><span class="value" id="hudReason">—</span></div>
+  <div class="row"><span class="label">Angle</span><span class="value" id="hudAngle">—</span></div>
+  <div class="row"><span class="label">State</span><span class="value" id="hudState">—</span></div>
 `;
-
 
   hudEl.appendChild(bannerEl);
   hudEl.appendChild(detailsEl);
@@ -39,17 +37,11 @@ export function updateHud(agentResult) {
   const angle = typeof agentResult?.angle === "number" ? agentResult.angle : null;
   const risk = !!agentResult?.risk;
   const reason = agentResult?.reason ?? "—";
-
   const level = agentResult?.level ?? "safe";
 
   if (risk) lastRiskTimeMs = now;
   const showRisk = (now - lastRiskTimeMs) < HOLD_RISK_MS;
 
-  // Decides the state of the banner
-  //  RISK if currently risky OR in hold period
-  //  WARNING if in buffer zone
-  //  SAFE if no risk and has angle
-  //  WARN (orange) if missing data
   let bannerText = "LOADING…";
   let bannerClass = "warn";
   let stateText = "—";
@@ -59,20 +51,21 @@ export function updateHud(agentResult) {
     bannerClass = "warn";
     stateText = "No landmarks";
   } else if (showRisk) {
-    bannerText = "RISK";
+    bannerText = "RISK DETECTED";
     bannerClass = "risk";
     stateText = "Risk";
   } else if (level === "warning") {
-    bannerText = "WARNING";
+    bannerText = "CAUTION";
     bannerClass = "warning";
     stateText = "Warning";
   } else {
-    bannerText = "SAFE";
+    bannerText = "ALL CLEAR";
     bannerClass = "safe";
     stateText = "Safe";
   }
 
-  bannerEl.textContent = bannerText;
+  const statusText = bannerEl.querySelector(".status-text");
+  if (statusText) statusText.textContent = bannerText;
   bannerEl.className = bannerClass;
 
   const reasonEl = document.getElementById("hudReason");
@@ -83,4 +76,3 @@ export function updateHud(agentResult) {
   if (angleEl) angleEl.textContent = angle === null ? "—" : `${Math.abs(angle).toFixed(1)}°`;
   if (stateEl) stateEl.textContent = stateText;
 }
-
