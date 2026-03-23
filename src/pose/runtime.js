@@ -35,9 +35,14 @@ async function initPose() {
 }
 initPose();
 
+// Start prediction loop once video data is ready (registered once)
+video.addEventListener("loadeddata", () => {
+  if (webcamRunning) predictWebcam();
+});
+
 // Webcam Button
 webcamButton.addEventListener("click", async () => {
-  // Ignore if webcam not on
+  // Ignore if model not loaded
   if (!poseLandmarker) return;
 
   // Button toggle (off/on)
@@ -52,7 +57,6 @@ webcamButton.addEventListener("click", async () => {
     webcamButton.innerText = "DISABLE WEBCAM";
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
-    video.addEventListener("loadeddata", predictWebcam);
   }
 });
 

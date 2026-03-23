@@ -12,18 +12,30 @@ const SUDDEN_LEAN_DELTA = 15;
 // Store last angle to detect sudden changes
 let lastAngle = null;
 
-// Evaluate torso risk based on angle and sudden changes
-
+// Risk levels: "safe", "warning", "risk"
 export function evaluateTorsoRisk(angleDeg) {
   const angle = Math.abs(angleDeg);
 
+  // ----- 1. Sudden movement check -----
+  if (lastAngle !== null) {
+    const delta = Math.abs(angle - lastAngle);
+    if (delta >= SUDDEN_LEAN_DELTA) {
+      lastAngle = angle;
+      return {
+        level: "risk",
+        risk: true,
+        reason: "Sudden movement detected — slow down"
+      };
+    }
+  }
 
-  // Update last angle
+  // Update last angle after the delta check
   lastAngle = angle;
 
   // ----- 2. Absolute posture check -----
   if (angle >= RISK_MIN_LEAN_DEG) {
     return {
+      level: "risk",
       risk: true,
       reason: "Too much forward lean — possible injury risk"
     };
@@ -31,6 +43,7 @@ export function evaluateTorsoRisk(angleDeg) {
 
   if (angle <= SAFE_MAX_LEAN_DEG) {
     return {
+      level: "safe",
       risk: false,
       reason: "Posture looks safe"
     };
@@ -38,6 +51,7 @@ export function evaluateTorsoRisk(angleDeg) {
 
   // ----- 3. Buffer zone -----
   return {
+    level: "warning",
     risk: false,
     reason: "Leaning forward — try to keep chest up"
   };

@@ -23,6 +23,7 @@ export function runAgent(joints) {
   // Return result for UI
   return {
     angle,
+    level: decision.level,
     risk: decision.risk,
     reason: decision.reason
   };

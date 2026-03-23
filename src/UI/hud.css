@@ -54,6 +54,10 @@
     background: rgba(220, 40, 40, 0.92);
   }
   
+  .warning {
+    background: rgba(230, 180, 0, 0.92);
+  }
+
   .warn {
     background: rgba(230, 140, 0, 0.92);
   }

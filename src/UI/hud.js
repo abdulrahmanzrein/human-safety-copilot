@@ -40,13 +40,16 @@ export function updateHud(agentResult) {
   const risk = !!agentResult?.risk;
   const reason = agentResult?.reason ?? "—";
 
+  const level = agentResult?.level ?? "safe";
+
   if (risk) lastRiskTimeMs = now;
   const showRisk = (now - lastRiskTimeMs) < HOLD_RISK_MS;
 
   // Decides the state of the banner
   //  RISK if currently risky OR in hold period
+  //  WARNING if in buffer zone
   //  SAFE if no risk and has angle
-  //  WARN if missing data
+  //  WARN (orange) if missing data
   let bannerText = "LOADING…";
   let bannerClass = "warn";
   let stateText = "—";
@@ -59,6 +62,10 @@ export function updateHud(agentResult) {
     bannerText = "RISK";
     bannerClass = "risk";
     stateText = "Risk";
+  } else if (level === "warning") {
+    bannerText = "WARNING";
+    bannerClass = "warning";
+    stateText = "Warning";
   } else {
     bannerText = "SAFE";
     bannerClass = "safe";
@@ -73,8 +80,7 @@ export function updateHud(agentResult) {
   const stateEl = document.getElementById("hudState");
 
   if (reasonEl) reasonEl.textContent = reason;
-  if (angleEl) angleEl.textContent = angle === null ? "—" : `${Math.abs(angle).toFixed(1)
-  }°`;
+  if (angleEl) angleEl.textContent = angle === null ? "—" : `${Math.abs(angle).toFixed(1)}°`;
   if (stateEl) stateEl.textContent = stateText;
 }
 
